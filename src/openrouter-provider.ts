@@ -97,7 +97,12 @@ export function createOpenRouter(
   options: OpenRouterProviderSettings = {},
 ): OpenRouterProvider {
   const baseURL =
-    withoutTrailingSlash(options.baseURL ?? options.baseUrl) ??
+    withoutTrailingSlash(
+      options.baseURL ??
+        options.baseUrl ??
+        process.env.OPENROUTER_BASE_URL ??
+        process.env.OPENROUTER_BASEURL,
+    ) ??
     'https://openrouter.ai/api/v1';
 
   // we default to compatible, because strict breaks providers like Groq:

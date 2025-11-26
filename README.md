@@ -15,6 +15,14 @@ npm install @openrouter/ai-sdk-provider
 yarn add @openrouter/ai-sdk-provider
 ```
 
+### Configuration
+
+- Set your API key via the `OPENROUTER_API_KEY` environment variable or pass it
+  directly through `createOpenRouter({ apiKey: '...' })`.
+- To route requests through a proxy or self-hosted gateway, set
+  `OPENROUTER_BASE_URL` to the desired base URL (e.g.
+  `https://custom.example.com/api/v1`).
+
 ## Provider Instance
 
 You can import the default provider instance `openrouter` from `@openrouter/ai-sdk-provider`:
