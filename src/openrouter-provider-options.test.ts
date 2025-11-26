@@ -19,10 +19,17 @@ describe('providerOptions', () => {
         chunks: [],
       },
     },
+    'https://custom-base.example/api/v1/chat/completions': {
+      response: {
+        type: 'stream-chunks',
+        chunks: [],
+      },
+    },
   });
 
   beforeEach(() => {
     vi.clearAllMocks();
+    server.calls.length = 0;
   });
 
   it('should set providerOptions openrouter to extra body', async () => {
@@ -57,5 +64,30 @@ describe('providerOptions', () => {
       model: 'anthropic/claude-3.7-sonnet',
       stream: true,
     });
+  });
+
+  it('uses OPENROUTER_BASE_URL environment variable when provided', async () => {
+    const previousBaseUrl = process.env.OPENROUTER_BASE_URL;
+    const customBaseUrl = 'https://custom-base.example/api/v1/';
+
+    process.env.OPENROUTER_BASE_URL = customBaseUrl;
+
+    const openrouter = createOpenRouter({
+      apiKey: 'test',
+    });
+    const model = openrouter('anthropic/claude-3.7-sonnet');
+
+    try {
+      await streamText({
+        model,
+        messages: TEST_MESSAGES,
+      }).consumeStream();
+
+      expect(server.calls[0]?.requestUrl).toBe(
+        'https://custom-base.example/api/v1/chat/completions',
+      );
+    } finally {
+      process.env.OPENROUTER_BASE_URL = previousBaseUrl;
+    }
   });
 });
